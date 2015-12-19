@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Towers of Hanoi Solver</title>
+<style type="text/css">
+html,body{
+	font-family:'open sans', sans-serif;
+	background-color:#FFFFFF;
+	color:#404040;
+}
+div.container{
+	width:100%;
+	max-width:60em;
+	margin-left:auto;
+	margin-right:auto;
+}
+#stacks{
+	width:98%;
+	margin-left:auto;
+	margin-right:auto;
+	margin-bottom:1em;
+	text-align:center;
+}
+.stack{
+	width:30%;
+	margin-right:1%;
+	display:inline-block;
+}
+.disc{
+	display:block;
+	height:3em;
+	line-height:3em;
+	text-align:center;
+	width:100%;
+	background-color:#EEEEEE;
+	margin-left:auto;
+	margin-right:auto;
+	margin-top:0.3em;
+	overflow:hidden;
+	transition:background-color 0.18s ease-in;
+}
+.selected{
+	background-color:#AAAAFF;
+}
+</style>
+<!--[if lt IE 8]>
+<style type="text/css">
+.stack{ display:inline; zoom:1; }
+</style>
+<![endif]-->
+<script type="text/javascript">
+	function createStack(nDiscs){
+		var stacks=document.getElementById("stacks");
+		stacks.innerHTML="";
+		var stack0=document.createElement("div");
+		stack0.className="stack";
+		stacks.appendChild(stack0);
+		var stack1=document.createElement("div");
+		stack1.className="stack";
+		stacks.appendChild(stack1);
+		var stack2=document.createElement("div");
+		stack2.className="stack";
+		stacks.appendChild(stack2);
+		for(var i=0;i<nDiscs;i++){
+			var f=(i+1)/nDiscs;
+			var disc=document.createElement("div");
+			disc.className="disc";
+			disc.style.width=(100-60*(1-f))+"%";
+			disc.id="stack0_disc"+(nDiscs-i-1);
+			stack0.appendChild(disc);
+			disc=document.createElement("div");
+			disc.className="disc";
+			disc.style.width=(100-60*(1-f))+"%";
+			disc.id="stack1_disc"+(nDiscs-i-1);
+			stack1.appendChild(disc);
+			disc=document.createElement("div");
+			disc.className="disc";
+			disc.style.width=(100-60*(1-f))+"%";
+			disc.id="stack2_disc"+(nDiscs-i-1);
+			stack2.appendChild(disc);
+		}
+	}
+	
+	var moves=[];
+	var discs=[];
+	var iPos=-1;
+	function solve(){
+		document.getElementById("controls").style.display="none";
+		moves=[];
+		discs=[];
+		var nDiscs=Number(document.getElementById("nDiscs").value);
+		createStack(nDiscs);
+		for(var i=0;i<nDiscs;i++) discs.push(0);
+		var radios=document.getElementsByName("dest");
+		var destination=1;
+		for(var i=0;i<radios.length;i++) if(radios[i].checked){destination=radios[i].value; break;}
+		move(0,0,Number(destination));
+		var interval=setInterval(function(){
+			if(iPos==moves.length){
+				document.getElementById("controls").style.display="";
+				clearInterval(interval);
+				iPos=-1;
+				return;
+			}else if(iPos==-1){
+				for(var i=0;i<discs.length;i++){
+					document.getElementById("stack0_disc"+i).className="disc selected";
+					document.getElementById("stack1_disc"+i).className="disc";
+					document.getElementById("stack2_disc"+i).className="disc";
+				}
+			}else{
+				var m=moves[iPos];
+				document.getElementById("stack"+m[1]+"_disc"+m[0]).className="disc";
+				document.getElementById("stack"+m[2]+"_disc"+m[0]).className="disc selected";
+			}
+			iPos++;
+		},1000);
+	}
+	function move(disc,src,dst){
+		var s=false;
+		for(var i=disc+1;i<discs.length;i++){
+			if(discs[i]==src){s=true; break;}
+		}
+		if(!s){
+			moves.push([disc,discs[disc],dst]);
+			discs[disc]=dst;
+		}else{
+			var tempDst=src == 0 && dst == 1 || src == 1 && dst == 0 ? 2 : src == 0 && dst == 2 || src == 2 && dst == 0 ? 1 : 0;
+			move(disc+1,src,tempDst);
+			moves.push([disc,discs[disc],dst]);
+			discs[disc]=dst;
+			move(disc+1,tempDst,dst);
+		}
+	}
+	
+</script>
+</head>
+<body>
+<div class="container">
+<h1>Towers of Hanoi Solver</h1>
+<div id="stacks">
+</div>
+<form id="controls" action="javascript:solve()">
+<div>
+Number of discs <input id="nDiscs" type="number" min="1" value="4"/>
+</div>
+<div>
+<input type="radio" name="dest" value="1" checked="checked">Left to middle (default)</input>
+<input type="radio" name="dest" value="2">Left to right</input>
+</div>
+<input type="submit" value="Solve"/>
+</form>
+</div>
+</body>
+</html>
