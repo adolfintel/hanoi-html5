@@ -8,7 +8,7 @@ Implemented when I was learning JS. Nothing too impressive but I'm sharing it an
 IE6 and up.
 
 ## Screenshots
-![Screenshot](http://adolfintel.com/hanoi/web1.png)
+![Screenshot](http://fdossena.com/hanoi/web1.png)
 
 ## License
 Copyright (C) 2015 Federico Dossena
